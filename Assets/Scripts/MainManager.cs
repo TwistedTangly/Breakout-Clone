@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainManager : MonoBehaviour
 {
@@ -11,14 +12,23 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text HighScoreText;
     public GameObject GameOverText;
+    public GameObject highscoreScreen;
+    public TMP_InputField inputField;
+    public Material[] materials;
+    public GameObject paddle;
+
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
 
-    
+    int highScore;
+    string playerName;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,6 +46,8 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        UpdateHighScore();
+        paddle.GetComponent<MeshRenderer>().material = materials[GameManager.Instance.matNum];
     }
 
     private void Update()
@@ -68,9 +80,58 @@ public class MainManager : MonoBehaviour
         ScoreText.text = $"Score : {m_Points}";
     }
 
+    void UpdateHighScore()
+    {
+        highScore = GameManager.Instance.HighScore;
+        string highScorePlayerName = GameManager.Instance.highScoreName;
+        HighScoreText.text = "High Score : " + highScorePlayerName + ": " + highScore;
+    }
+
+    public void InputHighestName()
+    {
+        playerName = inputField.text;
+        if (m_Points == highScore)
+        {
+            GameManager.Instance.highScoreName = playerName;
+        }
+        else if (m_Points == GameManager.Instance.secondHighScore)
+        {
+            GameManager.Instance.secondhighScoreName = playerName;
+        }
+        else if (m_Points == GameManager.Instance.thirdHighScore)
+        {
+            GameManager.Instance.thirdHighScoreName = playerName;
+        }
+
+        GameManager.Instance.SaveHighScore();
+        SceneManager.LoadScene(2);
+    }
+
+
     public void GameOver()
     {
-        m_GameOver = true;
-        GameOverText.SetActive(true);
+        
+        if (m_Points > highScore)
+        {
+            highscoreScreen.SetActive(true);
+            GameManager.Instance.HighScore = m_Points;
+        }
+        else if (m_Points > GameManager.Instance.secondHighScore)
+        {
+            highscoreScreen.SetActive(true);
+            GameManager.Instance.secondHighScore = m_Points;
+        }
+        else if (m_Points > GameManager.Instance.thirdHighScore)
+        {
+            highscoreScreen.SetActive(true);
+            GameManager.Instance.thirdHighScore = m_Points;
+        }
+        else
+        {
+            m_GameOver = true;
+            GameOverText.SetActive(true);
+        }
+        
+
     }
 }
