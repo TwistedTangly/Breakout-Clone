@@ -114,11 +114,16 @@ public class MainManager : MonoBehaviour
         if (m_Points > highScore)
         {
             highscoreScreen.SetActive(true);
+            GameManager.Instance.secondHighScore = GameManager.Instance.HighScore;
+            GameManager.Instance.secondhighScoreName = GameManager.Instance.highScoreName;
+            GameManager.Instance.thirdHighScore = GameManager.Instance.secondHighScore;
             GameManager.Instance.HighScore = m_Points;
         }
         else if (m_Points > GameManager.Instance.secondHighScore)
         {
             highscoreScreen.SetActive(true);
+            GameManager.Instance.thirdHighScore = GameManager.Instance.secondHighScore;
+            GameManager.Instance.thirdHighScoreName = GameManager.Instance.secondhighScoreName;
             GameManager.Instance.secondHighScore = m_Points;
         }
         else if (m_Points > GameManager.Instance.thirdHighScore)
